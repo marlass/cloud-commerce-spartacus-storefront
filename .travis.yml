@@ -37,6 +37,8 @@ addons:
   artifacts:
     paths:
       - protractor.log.json
+    target_paths:
+      - /$TRAVIS_REPO_SLUG/$TRAVIS_BRANCH/$TRAVIS_COMMIT/
   # sonarcloud:
   #   organization: sap
   #   token:
