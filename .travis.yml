@@ -41,6 +41,8 @@ notifications:
   #   on_success: change
 addons:
   chrome: stable
+  artifacts:
+    paths: protractor.log.json
   # sonarcloud:
   #   organization: sap
   #   token:
