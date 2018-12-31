@@ -4,13 +4,6 @@ node_js:
 dist: trusty
 git:
   depth: false
-branches:
-  only:
-    - develop
-    - master
-    - "/^feature\\/.*$/"
-    - "/^hotfix\\/.*$/"
-    - "/^release\\/.*$/"
 jobs:
   include:
     - stage: 'Validation'
