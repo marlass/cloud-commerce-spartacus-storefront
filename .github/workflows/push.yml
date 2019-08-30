@@ -16,5 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Linter
-      run: yarn
-        yarn lint
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: <registry url>
+    - run: npm install -g yarn
+    - run: yarn
+    - run: yarn lint
