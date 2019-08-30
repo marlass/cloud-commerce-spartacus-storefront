@@ -10,3 +10,11 @@ jobs:
       uses: ./.github/api-extractor-action
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Linter
+      run: yarn
+      run: yarn lint
