@@ -1,5 +1,5 @@
 on: push
-name: API extractor
+name: Github CI
 jobs:
   breakingChangeDetectionBot:
     name: Breaking change detection bot
