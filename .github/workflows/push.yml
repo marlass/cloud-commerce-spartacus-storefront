@@ -33,6 +33,7 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
     - run: npm install -g yarn
     - run: yarn
+    - run: npm i -g @angular/cli
     - run: ng test core --watch=false --sourceMap --code-coverage --browsers=ChromeHeadless
   unit-lib:
     name: Unit tests lib
@@ -45,4 +46,5 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
     - run: npm install -g yarn
     - run: yarn
+    - run: npm i -g @angular/cli
     - run: ng test storefrontlib --watch=false --sourceMap --code-coverage --browsers=ChromeHeadless
