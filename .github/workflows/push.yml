@@ -17,4 +17,4 @@ jobs:
     - uses: actions/checkout@master
     - name: Linter
       run: yarn
-      run: yarn lint
+        yarn lint
