@@ -22,8 +22,8 @@ jobs:
     - run: npm install -g yarn
     - run: yarn
     - run: yarn lint
-  unit:
-    name: Unit tests
+  unit-core:
+    name: Unit tests core
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -33,4 +33,16 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
     - run: npm install -g yarn
     - run: yarn
-    - run: yarn test:core:lib
+    - run: ng test core --watch=false --sourceMap --code-coverage --browsers=ChromeHeadless
+  unit-lib:
+    name: Unit tests lib
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: npm install -g yarn
+    - run: yarn
+    - run: ng test storefrontlib --watch=false --sourceMap --code-coverage --browsers=ChromeHeadless
