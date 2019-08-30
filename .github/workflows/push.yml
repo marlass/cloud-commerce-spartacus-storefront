@@ -58,5 +58,6 @@ jobs:
         node-version: '10.x'
         registry-url: 'https://registry.npmjs.org'
     - run: npm install -g yarn
+    - run: yarn
     - run: cd projects/storefrontapp-e2e-cypress && yarn && cd ../..
     - run: yarn e2e:cy:start-run-ci
