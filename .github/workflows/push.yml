@@ -19,7 +19,7 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '10.x'
-        registry-url: <registry url>
+        registry-url: 'https://registry.npmjs.org'
     - run: npm install -g yarn
     - run: yarn
     - run: yarn lint
