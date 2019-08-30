@@ -1,5 +1,4 @@
 on: push
-name: Github CI
 jobs:
   breakingChangeDetectionBot:
     name: Breaking change detection bot
