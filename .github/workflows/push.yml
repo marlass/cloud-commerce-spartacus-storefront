@@ -48,3 +48,14 @@ jobs:
     - run: yarn
     - run: npm i -g @angular/cli
     - run: ng test storefrontlib --watch=false --sourceMap --code-coverage --browsers=ChromeHeadless
+  e2e:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: npm install -g yarn
+    - run: yarn e2e:cy:start-run-ci
