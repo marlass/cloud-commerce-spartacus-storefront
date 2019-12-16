@@ -7,7 +7,7 @@
   "scripts": {
     "cy:open": "cypress open",
     "cy:run": "cypress run --spec cypress/integration/smoke/**/*",
-    "cy:cli": "cypress run",
+    "cy:cli": "cypress run --record --parallel --group Actions example --ci-build-id `${GITHUB_WORKFLOW} - ${GITHUB_SHA}` --env false",
     "cy:run:mobile": "cypress run --config numTestsKeptInMemory=1 --spec \"cypress/integration/mobile/**/*\"",
     "cy:run:regression": "cypress run --config numTestsKeptInMemory=1 --spec \"cypress/integration/regression/**/*\"",
     "cy:run:all": "cypress run --config numTestsKeptInMemory=1 --spec \"cypress/integration/**/*\""

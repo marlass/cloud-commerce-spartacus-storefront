@@ -13,11 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-
-      # because of "record" and "parallel" parameters
-      # these containers will load balance all found tests among themselves
       - name: Cypress run
-        run: cd projects/storefrontapp-e2e-cypress && npm i && npm run cy:cli -- --record --parallel --group Actions example --config-file cypress.json --ci-build-id `${GITHUB_WORKFLOW} - ${GITHUB_SHA}` --env false
+        run: cd projects/storefrontapp-e2e-cypress && npm i && npm run cy:cli
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
