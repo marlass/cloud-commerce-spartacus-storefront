@@ -16,6 +16,8 @@ jobs:
 
       # because of "record" and "parallel" parameters
       # these containers will load balance all found tests among themselves
+      - name: Start server in the background
+        run: cd projects/storefrontapp-e2e-cypress && npm i
       - name: Cypress run
         uses: cypress-io/github-action@v1
         with:
