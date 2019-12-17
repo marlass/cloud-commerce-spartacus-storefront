@@ -8,6 +8,7 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run --spec cypress/integration/smoke/**/*",
     "cy:cli": "cypress run --record --parallel --group Actions --ci-build-id $GITHUB_SHA",
+    "cy:cli:1": "cypress run --spec cypress/integration/smoke/**/*",
     "cy:run:mobile": "cypress run --config numTestsKeptInMemory=1 --spec \"cypress/integration/mobile/**/*\"",
     "cy:run:regression": "cypress run --config numTestsKeptInMemory=1 --spec \"cypress/integration/regression/**/*\"",
     "cy:run:all": "cypress run --config numTestsKeptInMemory=1 --spec \"cypress/integration/**/*\""

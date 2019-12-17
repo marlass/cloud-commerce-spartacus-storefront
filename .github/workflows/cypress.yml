@@ -1,4 +1,4 @@
-name: Parallel Cypress Tests
+name: Deploy & E2E
 
 on: [push]
 
@@ -14,7 +14,7 @@ jobs:
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }}
           github-token: ${{ secrets.TOKEN_GITHUB }}
-  test:
+  test1:
     needs: [deploy]
     name: Cypress run
     runs-on: ubuntu-latest
@@ -30,16 +30,9 @@ jobs:
         uses: marlass/now-deployment-url@master
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }}
-      - name: Log steps
-        env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
-      - name: Log steps
-        env:
-          ENVIRONMENT_CONTEXT: ${{ toJson(env) }}
-        run: echo "$ENVIRONMENT_CONTEXT"
-      - name: Cypress run
-        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_baseUrl && npm run cy:cli
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_baseUrl && npm run cy:cli:1
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
