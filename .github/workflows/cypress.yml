@@ -11,8 +11,6 @@ jobs:
         uses: actions/checkout@v1
       - name: Deploy on Zeit
         uses: actions/zeit-now@master
-        outputs:
-          preview-url: 'Preview url of the deployment'
         env:
           ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
   test:
