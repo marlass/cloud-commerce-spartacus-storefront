@@ -34,9 +34,12 @@ jobs:
         env:
           STEPS_CONTEXT: ${{ toJson(steps) }}
         run: echo "$STEPS_CONTEXT"
+      - name: Log steps
+        env:
+          ENVIRONMENT_CONTEXT: ${{ toJson(env) }}
+        run: echo "$ENVIRONMENT_CONTEXT"
       - name: Cypress run
         run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_baseUrl && npm run cy:cli
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_BASE_URL: ${{ steps.zeit-url.outputs.preview-url }}
