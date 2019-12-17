@@ -6,6 +6,6 @@
     { "source": "/(.*)", "destination": "/storefrontapp/index.html" }
   ],
   "github": {
-    "enable": false
+    "enabled": false
   }
 }
