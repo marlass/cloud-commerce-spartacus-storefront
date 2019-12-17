@@ -10,7 +10,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v1
       - name: Deploy on Zeit
-        uses: actions/zeit-now@master
+        uses: amondnet/now-deployment@v1
         env:
           ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
   test:
