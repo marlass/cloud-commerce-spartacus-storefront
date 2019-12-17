@@ -26,6 +26,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Log steps
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT
       - name: Cypress run
         run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_baseUrl && npm run cy:cli
         env:
