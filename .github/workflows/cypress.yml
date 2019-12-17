@@ -16,7 +16,7 @@ jobs:
           github-token: ${{ secrets.TOKEN_GITHUB }}
   test1:
     needs: [deploy]
-    name: Cypress run
+    name: Smoke
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -32,6 +32,182 @@ jobs:
           zeit-token: ${{ secrets.ZEIT_TOKEN }}
       - name: Cypress smoke
         run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:1
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+  test2:
+    needs: [deploy]
+    name: Regression 1
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 1 copy of the current job in parallel
+        containers: [1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:2
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+  test3:
+    needs: [deploy]
+    name: Regression 2
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 1 copy of the current job in parallel
+        containers: [1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:3
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+  test4:
+    needs: [deploy]
+    name: Regression 3
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 1 copy of the current job in parallel
+        containers: [1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:4
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+  test5:
+    needs: [deploy]
+    name: Regression 4
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 1 copy of the current job in parallel
+        containers: [1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:5
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+  test6:
+    needs: [deploy]
+    name: Regression 5
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 1 copy of the current job in parallel
+        containers: [1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:6
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+  test7:
+    needs: [deploy]
+    name: Mobile 1
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 1 copy of the current job in parallel
+        containers: [1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:7
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+  test8:
+    needs: [deploy]
+    name: Mobile 2
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 1 copy of the current job in parallel
+        containers: [1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:8
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+  test9:
+    needs: [deploy]
+    name: Mobile 3
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # run 1 copy of the current job in parallel
+        containers: [1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:9
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
