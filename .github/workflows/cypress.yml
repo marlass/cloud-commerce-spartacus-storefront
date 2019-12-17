@@ -31,7 +31,7 @@ jobs:
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }}
       - name: Cypress smoke
-        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_baseUrl && npm run cy:cli:1
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && echo $CYPRESS_BASE_URL && npm run cy:cli:1
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
