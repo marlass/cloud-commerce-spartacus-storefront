@@ -10,7 +10,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v1
       - name: Deploy on Zeit
-        uses: amondnet/now-deployment@v1
+        uses: marlass/now-deployment@v1
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }}
           github-token: ${{ secrets.TOKEN_GITHUB }}
