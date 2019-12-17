@@ -67,6 +67,9 @@ if (!environment.production) {
         level: '1.4',
         anonymousConsents: true,
       },
+      pwa: {
+        enabled: false,
+      },
     }),
     JsonLdBuilderModule,
 
