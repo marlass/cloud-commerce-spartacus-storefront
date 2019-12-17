@@ -29,7 +29,7 @@ jobs:
         with:
           version: 12
       - name: Cypress run
-        run: node ./set-env-to-deploy.js && yarn && cd projects/storefrontapp-e2e-cypress && npm i && npm run set-deployment-env && npm run cy:cli
+        run: node ./set-env-to-deploy.js && yarn && cd projects/storefrontapp-e2e-cypress && npm i && npm run cy:cli
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
