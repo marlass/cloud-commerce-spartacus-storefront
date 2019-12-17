@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           version: 12
-        run: node ./set-env-to-deploy.js
+      - run: node ./set-env-to-deploy.js
   test:
     needs: [deploy_success]
     name: Cypress run
