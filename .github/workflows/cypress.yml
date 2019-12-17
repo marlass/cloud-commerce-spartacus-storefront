@@ -14,7 +14,7 @@ jobs:
         env:
           ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
   test:
-    needs: [deploy_success]
+    needs: [deploy]
     name: Cypress run
     runs-on: ubuntu-latest
     strategy:
