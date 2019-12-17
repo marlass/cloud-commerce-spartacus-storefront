@@ -13,6 +13,7 @@ jobs:
         uses: amondnet/now-deployment@v1
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }}
+          github-token: ${{ secrets.TOKEN_GITHUB }}
   test:
     needs: [deploy]
     name: Cypress run
