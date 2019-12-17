@@ -1,18 +1,20 @@
 name: Parallel Cypress Tests
 
-on: [deployment_status]
+on: [push]
 
 jobs:
-  deploy_success:
-    name: Deploy success
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Set env to deployment
+      - name: Checkout the repository
         uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          version: 12
-      - run: node ./set-env-to-deploy.js
+      - name: Deploy on Zeit
+        uses: actions/zeit-now@master
+        outputs:
+          preview-url: 'Preview url of the deployment'
+        env:
+          ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
   test:
     needs: [deploy_success]
     name: Cypress run
@@ -25,11 +27,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          version: 12
       - name: Cypress run
-        run: node ./set-env-to-deploy.js && yarn && cd projects/storefrontapp-e2e-cypress && npm i && npm run cy:cli
+        run: yarn && cd projects/storefrontapp-e2e-cypress && npm i && npm run cy:cli
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_baseUrl: ${{ outputs.preview-url }}

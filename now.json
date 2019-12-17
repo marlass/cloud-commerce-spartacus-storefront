@@ -4,5 +4,8 @@
   "rewrites": [
     { "source": "/(.*\\..*)", "destination": "/storefrontapp/$1" },
     { "source": "/(.*)", "destination": "/storefrontapp/index.html" }
-  ]
+  ],
+  "github": {
+    "enable": false
+  }
 }
