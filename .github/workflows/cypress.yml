@@ -26,6 +26,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Get deploy url from ZEIT
+        uses: marlass/now-deployment-url@v1
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
       - name: Log steps
         env:
           STEPS_CONTEXT: ${{ toJson(steps) }}
