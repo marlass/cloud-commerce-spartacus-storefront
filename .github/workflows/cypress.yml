@@ -31,4 +31,4 @@ jobs:
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          CYPRESS_baseUrl: ${{ steps.deploy.outputs.preview-url }}
+          CYPRESS_BASE_URL: ${{ steps.deploy.outputs.preview-url }}
