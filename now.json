@@ -2,7 +2,7 @@
   "name": "spartacus",
   "version": 2,
   "rewrites": [
-    { "source": "/(.*\\..*))", "destination": "/storefrontapp/$1" },
+    { "source": "/(.*\\..*)", "destination": "/storefrontapp/$1" },
     { "source": "/.*", "destination": "/storefrontapp/index.html" }
   ]
 }
