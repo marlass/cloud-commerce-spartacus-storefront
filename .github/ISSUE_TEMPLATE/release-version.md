@@ -15,6 +15,8 @@ assignees: ''
 - [ ]  run all e2e tests on release branch (tip: run mobile, regression, smoke scripts in parallel to get all the results faster, after that retry failed tests in open mode)
 - [ ]  make sure that release branch is working correctly, everything is passing and it builds (click few pages manually and look into build errors)
 
+---
+
 For Mac:
 - [ ]  cleanup repo, build and generate compodocs and publish on github pages, generate spartacussampleaddon archives (`./scripts/pre-release.sh`)
 
@@ -23,18 +25,19 @@ For Windows:
 - [ ]  download and rename in root directory `https://github.tools.sap/cx-commerce/spartacussampledataaddon/archive/develop.zip` -> `spartacussampleaddon.zip`
 - [ ]  download and rename in root directory `https://github.tools.sap/cx-commerce/spartacussampledataaddon/archive/develop.tar.gz` -> `spartacussampleaddon.tar.gz`
 
+---
 
 - [ ]  release libraries with `release-it` scripts (eg. for core `npm run release:core:with-changelog`)
-        - make sure to run it as a npm script (`yarn` has issues with npm login`)
+        - make sure to run it as an npm script (`yarn` has issues with npm login)
         - add GITHUB_TOKEN env variable (`export GITHUB_TOKEN=token`)
-        - be logged into npm
+        - be logged in to npm
 - [ ]  check if release notes are populated on github (polish them or ask someone to review and improve them)
 - [ ]  check tags on npm (`next` should always point to the highest version, `latest` to highest stable version)
 - [ ]  check if everything builds from npm packages (spartacus installation script)
 - [ ]  merge release branch into develop branch (for next releases) or into maintenance branch (for any other release)
 - [ ]  announce on tribe channel
-- [ ]  create tickets to non blocking release problems found during the release process
+- [ ]  create tickets to nonblocking release problems found during the release process
 
 
-Notes:
-- always release everything with same version number (schematics exception for now)
+## Notes
+- always release libraries with the same version number (schematics exception for now)
