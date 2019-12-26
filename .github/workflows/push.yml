@@ -1,5 +1,5 @@
 on: push
-name: API extractor
+name: CI
 jobs:
   breakingChangeDetectionBot:
     name: Breaking change detection bot
@@ -10,3 +10,72 @@ jobs:
       uses: ./.github/api-extractor-action
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: npm install -g yarn
+    - run: yarn
+    - run: yarn lint
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/zeit-now@master
+      env:
+        ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
+  alias:
+    name: Alias
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - uses: actions/zeit-now@master
+      with:
+        args: alias
+      env:
+        ZEIT_TOKEN: ${{ secrets.ZEIT_TOKEN }}
+  unit-core:
+    name: Unit tests core
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: npm install -g yarn
+    - run: yarn
+    - run: npm i -g @angular/cli
+    - run: ng test core --watch=false --sourceMap --code-coverage --browsers=ChromeHeadless
+  unit-lib:
+    name: Unit tests lib
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: npm install -g yarn
+    - run: yarn
+    - run: npm i -g @angular/cli
+    - run: ng test storefrontlib --watch=false --sourceMap --code-coverage --browsers=ChromeHeadless
+  e2e:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: npm install -g yarn
+    - run: yarn
+    - run: yarn build:core:lib
+    - run: cd projects/storefrontapp-e2e-cypress && yarn && cd ../..
+    - run: yarn e2e:cy:start-run-ci
