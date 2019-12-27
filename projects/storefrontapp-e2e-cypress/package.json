@@ -7,7 +7,16 @@
   "scripts": {
     "cy:open": "cypress open",
     "cy:run": "cypress run --spec cypress/integration/smoke/**/*",
-    "cy:cli": "cypress run",
+    "cy:cli": "cypress run --record --parallel --group Actions --ci-build-id $GITHUB_SHA",
+    "cy:cli:1": "cypress run --spec cypress/integration/smoke/**/*",
+    "cy:cli:2": "cypress run --spec cypress/integration/regression/*",
+    "cy:cli:3": "cypress run --spec cypress/integration/regression/site-context/**/*",
+    "cy:cli:4": "cypress run --spec cypress/integration/regression/reset-password/**/*,cypress/integration/regression/product-search/**/*,cypress/integration/regression/notification/**/*",
+    "cy:cli:5": "cypress run --spec cypress/integration/regression/my-account/**/*",
+    "cy:cli:6": "cypress run --spec cypress/integration/regression/coupon/**/*,cypress/integration/regression/consignment-tracking/**/*,cypress/integration/regression/checkout/**/*,cypress/integration/regression/anonymous-consents/**/*",
+    "cy:cli:7": "cypress run --spec cypress/integration/mobile/*,cypress/integration/mobile/product-search/**/*",
+    "cy:cli:8": "cypress run --spec cypress/integration/mobile/notification/**/*,cypress/integration/mobile/coupon/**/*,cypress/integration/mobile/checkout/**/*,cypress/integration/mobile/consignment-tracking/**/*",
+    "cy:cli:9": "cypress run --spec cypress/integration/mobile/my-account/**/*",
     "cy:run:mobile": "cypress run --config numTestsKeptInMemory=1 --spec \"cypress/integration/mobile/**/*\"",
     "cy:run:regression": "cypress run --config numTestsKeptInMemory=1 --spec \"cypress/integration/regression/**/*\"",
     "cy:run:all": "cypress run --config numTestsKeptInMemory=1 --spec \"cypress/integration/**/*\""
