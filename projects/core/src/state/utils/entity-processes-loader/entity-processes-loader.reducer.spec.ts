@@ -1,5 +1,4 @@
-import { initialLoaderState } from '@spartacus/core';
-import { initialEntityState } from '../entity/entity.reducer';
+import { StateUtils } from '@spartacus/core';
 import { initialProcessesState } from '../processes-loader';
 import {
   EntityProcessesDecrementAction,
@@ -19,7 +18,7 @@ describe('EntityProcessesLoader reducer', () => {
         action
       );
 
-      const expectedState = initialEntityState;
+      const expectedState = StateUtils.initialEntityState;
 
       expect(state).toEqual(expectedState);
     });
@@ -54,19 +53,30 @@ describe('EntityProcessesLoader reducer', () => {
     });
 
     describe('PROCESSES DECREMENT ACTION', () => {
-      it('should increment processesCount state', () => {
+      it('should decrement processesCount state', () => {
         const action = new EntityProcessesDecrementAction(
           TEST_ENTITY_TYPE,
           TEST_ENTITY_ID
         );
+        const initialState = {
+          entities: {
+            [TEST_ENTITY_ID]: {
+              processesCount: 2,
+              loading: false,
+              error: false,
+              success: false,
+              value: undefined,
+            },
+          },
+        };
         const state = entityProcessesLoaderReducer(TEST_ENTITY_TYPE)(
-          undefined,
+          initialState,
           action
         );
         const expectedState = {
           entities: {
             [TEST_ENTITY_ID]: {
-              processesCount: -1,
+              processesCount: 1,
               loading: false,
               error: false,
               success: false,
@@ -157,14 +167,25 @@ describe('EntityProcessesLoader reducer', () => {
           TEST_ENTITY_TYPE,
           TEST_ENTITIES_ID
         );
+        const initialState = {
+          entities: {
+            [TEST_ENTITIES_ID[0]]: {
+              processesCount: 3,
+              loading: false,
+              error: false,
+              success: false,
+              value: undefined,
+            },
+          },
+        };
         const state = entityProcessesLoaderReducer(TEST_ENTITY_TYPE)(
-          undefined,
+          initialState,
           action
         );
         const expectedState = {
           entities: {
             [TEST_ENTITIES_ID[0]]: {
-              processesCount: -1,
+              processesCount: 2,
               loading: false,
               error: false,
               success: false,
@@ -223,11 +244,11 @@ describe('EntityProcessesLoader reducer', () => {
           entities: {
             [TEST_ENTITIES_ID[0]]: {
               ...initialProcessesState,
-              ...initialLoaderState,
+              ...StateUtils.initialLoaderState,
             },
             [TEST_ENTITIES_ID[1]]: {
               ...initialProcessesState,
-              ...initialLoaderState,
+              ...StateUtils.initialLoaderState,
             },
             'another entity': {
               processesCount: 2,

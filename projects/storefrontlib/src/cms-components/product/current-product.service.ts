@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
-  FeatureConfigService,
   Product,
+  ProductScope,
   ProductService,
   RoutingService,
 } from '@spartacus/core';
-import { Observable } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -14,20 +14,31 @@ import { filter, map, switchMap } from 'rxjs/operators';
 export class CurrentProductService {
   constructor(
     private routingService: RoutingService,
-    private productService: ProductService,
-    protected features?: FeatureConfigService
+    private productService: ProductService
   ) {}
 
-  protected readonly PRODUCT_SCOPE =
-    this.features && this.features.isLevel('1.4') ? ['details'] : '';
+  protected readonly DEFAULT_PRODUCT_SCOPE = ProductScope.DETAILS;
 
-  getProduct(): Observable<Product> {
+  /**
+   * Will emit current product or null, if there is no current product (i.e. we are not on PDP)
+   *
+   * @param scopes
+   */
+  getProduct(
+    scopes?: (ProductScope | string)[] | ProductScope | string
+  ): Observable<Product | null> {
     return this.routingService.getRouterState().pipe(
-      map(state => state.state.params['productCode']),
-      filter(Boolean),
-      switchMap((productCode: string) =>
-        this.productService.get(productCode, this.PRODUCT_SCOPE)
-      )
+      map((state) => state.state.params['productCode']),
+      switchMap((productCode: string) => {
+        return productCode
+          ? this.productService.get(
+              productCode,
+              scopes || this.DEFAULT_PRODUCT_SCOPE
+            )
+          : of(null);
+      }),
+      filter((x) => x !== undefined),
+      distinctUntilChanged()
     );
   }
 }

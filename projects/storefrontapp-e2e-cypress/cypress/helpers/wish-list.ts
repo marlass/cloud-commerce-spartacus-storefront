@@ -1,5 +1,14 @@
+import { cheapProduct, user } from '../sample-data/checkout-flow';
 import { login, register } from './auth-forms';
+import * as checkoutAsPersistentUser from './checkout-as-persistent-user';
+import * as checkout from './checkout-flow';
 import { waitForPage } from './checkout-flow';
+import {
+  AddressData,
+  fillPaymentDetails,
+  fillShippingAddress,
+  PaymentDetails,
+} from './checkout-forms';
 import { generateMail, randomString } from './user';
 
 interface TestProduct {
@@ -12,15 +21,12 @@ interface TestProduct {
 export const products: TestProduct[] = [
   {
     code: '1934793',
-    type: 'camera',
     name: 'PowerShot A480',
-    price: 99.85,
   },
+  cheapProduct,
   {
-    code: '300938',
-    type: 'camera',
-    name: 'Photosmart E317 Digital Camera',
-    price: 114.12,
+    code: '779841',
+    name: 'FUN Flash Single Use Camera',
   },
 ];
 
@@ -53,7 +59,9 @@ export function waitForGetWishList() {
 
   cy.route(
     'GET',
-    `/rest/v2/electronics-spa/users/*/carts/*?fields=*&lang=en&curr=USD`
+    `${Cypress.env('OCC_PREFIX')}/${Cypress.env(
+      'BASE_SITE'
+    )}/users/*/carts/*?fields=*&lang=en&curr=USD`
   ).as('get_wish_list');
 }
 
@@ -120,7 +128,7 @@ export function verifyProductInWishList(product: TestProduct) {
 export function removeProductFromWishListPage(product: TestProduct) {
   waitForGetWishList();
   getWishListItem(product.name).within(() => {
-    cy.get('.cx-return-button>.btn-link').click({ force: true });
+    cy.get('.cx-return-button>button').click({ force: true });
   });
   cy.wait('@get_wish_list');
   getWishListItem(product.name).should('not.exist');
@@ -137,17 +145,17 @@ export function removeProductFromPdp() {
 }
 
 export function addProductToCart(product: TestProduct) {
-  cy.get('cx-mini-cart .count').contains('0');
-
   cy.server();
 
   cy.route(
     'POST',
-    `/rest/v2/electronics-spa/users/*/carts/*/entries?code=*&qty=*&lang=en&curr=USD`
+    `${Cypress.env('OCC_PREFIX')}/${Cypress.env(
+      'BASE_SITE'
+    )}/users/*/carts/*/entries?code=*&qty=*&lang=en&curr=USD`
   ).as('add_to_cart');
 
   getWishListItem(product.name).within(() => {
-    cy.get('cx-add-to-cart>button').click();
+    cy.get('cx-add-to-cart button').click();
   });
 
   cy.wait('@add_to_cart');
@@ -156,11 +164,9 @@ export function addProductToCart(product: TestProduct) {
     cy.get('.cx-dialog-buttons>.btn-primary').click({ force: true });
   });
 
-  cy.get('cx-mini-cart .count').contains('1');
-
   getCartItem(product.name).within(() => {
     cy.get('.cx-code').should('contain', product.code);
-    cy.get('.cx-counter-value').should('have.value', '1');
+    cy.get('cx-item-counter input').should('have.value', '1');
   });
 
   verifyProductInWishList(product);
@@ -188,6 +194,96 @@ export function goToProductPage(product: TestProduct) {
     cy.get('.cx-name>.cx-link').click({ force: true });
   });
   cy.wait(`@${productPage}`);
+}
+
+export function checkoutFromWishList(checkoutProducts: TestProduct[]) {
+  goToCartAndCheckout(checkoutProducts);
+  proceedToCheckout();
+  fillAddressForm();
+  checkout.verifyDeliveryMethod();
+  fillPaymentForm();
+  placeOrderWithProducts(checkoutProducts);
+  verifyOrderConfirmationPage(checkoutProducts);
+}
+
+export function checkoutFromCart(checkoutProducts: TestProduct[]) {
+  goToCartAndCheckout(checkoutProducts);
+  checkoutAsPersistentUser.selectShippingAddress();
+  checkoutAsPersistentUser.selectDeliveryMethod();
+  checkoutAsPersistentUser.selectPaymentMethod();
+  placeOrderWithProducts(checkoutProducts);
+  verifyOrderConfirmationPage(checkoutProducts);
+}
+
+function goToCartAndCheckout(checkoutProducts: TestProduct[]) {
+  const cartPage = waitForPage('/cart', 'getCartPage');
+  cy.get('cx-mini-cart').click();
+  cy.wait(`@${cartPage}`);
+
+  for (const product of checkoutProducts) {
+    cy.get('cx-cart-item-list').contains('cx-cart-item', product.code);
+  }
+}
+
+function proceedToCheckout() {
+  const shippingAddressPage = waitForPage(
+    '/checkout/shipping-address',
+    'getShippingAddressPage'
+  );
+  cy.getByText(/proceed to checkout/i).click();
+  cy.wait(`@${shippingAddressPage}`).its('status').should('eq', 200);
+}
+
+function fillAddressForm(shippingAddressData: AddressData = user) {
+  cy.get('.cx-checkout-title').should('contain', 'Shipping Address');
+  const deliveryPage = waitForPage(
+    '/checkout/delivery-mode',
+    'getDeliveryPage'
+  );
+  fillShippingAddress(shippingAddressData);
+  cy.wait(`@${deliveryPage}`).its('status').should('eq', 200);
+}
+
+function fillPaymentForm(
+  paymentDetailsData: PaymentDetails = user,
+  billingAddress?: AddressData
+) {
+  cy.get('.cx-checkout-title').should('contain', 'Payment');
+  const reviewPage = waitForPage('/checkout/review-order', 'getReviewPage');
+  fillPaymentDetails(paymentDetailsData, billingAddress);
+  cy.wait(`@${reviewPage}`).its('status').should('eq', 200);
+}
+
+function placeOrderWithProducts(checkoutProducts: TestProduct[]) {
+  cy.get('.cx-review-title').should('contain', 'Review');
+
+  for (const product of checkoutProducts) {
+    cy.get('cx-cart-item-list').contains('cx-cart-item', product.code);
+  }
+
+  cy.getByText('Terms & Conditions')
+    .should('have.attr', 'target', '_blank')
+    .should(
+      'have.attr',
+      'href',
+      `/${Cypress.env('BASE_SITE')}/en/USD/terms-and-conditions`
+    );
+  cy.get('.form-check-input').check();
+  const orderConfirmationPage = waitForPage(
+    '/order-confirmation',
+    'getOrderConfirmationPage'
+  );
+  cy.get('cx-place-order button.btn-primary').click();
+  cy.wait(`@${orderConfirmationPage}`).its('status').should('eq', 200);
+}
+
+function verifyOrderConfirmationPage(checkoutProducts: TestProduct[]) {
+  cy.get('.cx-page-title').should('contain', 'Confirmation of Order');
+  cy.get('h2').should('contain', 'Thank you for your order!');
+
+  for (const product of checkoutProducts) {
+    cy.get('cx-cart-item-list').contains('cx-cart-item', product.code);
+  }
 }
 
 function getCartItem(name: string) {

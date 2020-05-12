@@ -36,7 +36,7 @@ if (!environment.production) {
       backend: {
         occ: {
           baseUrl: environment.occBaseUrl,
-          legacy: false,
+          prefix: environment.occApiPrefix,
         },
       },
       context: {
@@ -46,6 +46,7 @@ if (!environment.production) {
           'electronics',
           'apparel-de',
           'apparel-uk',
+          'apparel-uk-spa',
         ],
       },
 
@@ -64,8 +65,12 @@ if (!environment.production) {
         fallbackLang: 'en',
       },
       features: {
-        level: '1.4',
-        anonymousConsents: true,
+        level: '1.5',
+      },
+      cart: {
+        selectiveCart: {
+          enabled: true,
+        },
       },
     }),
     JsonLdBuilderModule,

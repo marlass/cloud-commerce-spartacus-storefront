@@ -10,6 +10,7 @@ import {
   Product,
   ProductInterestEntryRelation,
   ProductInterestSearchResult,
+  ProductScope,
   ProductService,
   TranslationService,
   UserInterestsService,
@@ -63,7 +64,7 @@ export class MyInterestsComponent implements OnInit, OnDestroy {
       .getAndLoadProductInterests(this.DEFAULT_PAGE_SIZE)
       .pipe(
         tap(
-          interests =>
+          (interests) =>
             (this.pagination = {
               currentPage: interests.pagination.page,
               pageSize: interests.pagination.count,
@@ -72,10 +73,10 @@ export class MyInterestsComponent implements OnInit, OnDestroy {
               sort: 'byNameAsc',
             })
         ),
-        map(interest => ({
+        map((interest) => ({
           ...interest,
           results: interest.results
-            ? interest.results.map(result => ({
+            ? interest.results.map((result) => ({
                 ...result,
                 product$: this.getProduct(result),
               }))
@@ -112,7 +113,7 @@ export class MyInterestsComponent implements OnInit, OnDestroy {
   private getProduct(
     interest: ProductInterestEntryRelation
   ): Observable<Product> {
-    return this.productService.get(interest.product.code, 'details');
+    return this.productService.get(interest.product.code, ProductScope.DETAILS);
   }
 
   removeInterest(

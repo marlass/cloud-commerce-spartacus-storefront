@@ -1,20 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { filter, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
+import { AuthService } from '../../auth/facade/auth.service';
+import { Cart } from '../../model/cart.model';
+import { OrderEntry } from '../../model/order.model';
+import { OCC_USER_ID_ANONYMOUS } from '../../occ/utils/occ-constants';
+import { BaseSiteService } from '../../site-context/facade/base-site.service';
+import { LoaderState } from '../../state/utils/loader/loader-state';
+import { UserService } from '../../user/facade/user.service';
+import { CartConfigService } from '../services/cart-config.service';
 import { StateWithMultiCart } from '../store/multi-cart-state';
 import { MultiCartService } from './multi-cart.service';
-import { UserService } from '../../user/facade/user.service';
-import { AuthService } from '../../auth/facade/auth.service';
-import { OCC_USER_ID_ANONYMOUS } from '../../occ/utils/occ-constants';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { Cart } from '../../model/cart.model';
-import { LoaderState } from '../../state/utils/loader/loader-state';
-import { map, filter, tap, shareReplay, switchMap, take } from 'rxjs/operators';
-import { OrderEntry } from '../../model/order.model';
 
-// ! Do not expose in public API
-// It is a prototype service for selective cart/save for later that can change when implementing that feature
-
-// TODO: Add unit tests, doc comments for that when working on this feature
 @Injectable()
 export class SelectiveCartService {
   private customerId: string;
@@ -30,7 +28,7 @@ export class SelectiveCartService {
   private previousUserId = this.PREVIOUS_USER_ID_INITIAL_VALUE;
 
   private cartSelector$ = this.cartId$.pipe(
-    switchMap(cartId => {
+    switchMap((cartId) => {
       this.cartId = cartId;
       return this.multiCartService.getCartEntity(cartId);
     })
@@ -40,22 +38,29 @@ export class SelectiveCartService {
     protected store: Store<StateWithMultiCart>,
     protected userService: UserService,
     protected authService: AuthService,
-    protected multiCartService: MultiCartService
+    protected multiCartService: MultiCartService,
+    protected baseSiteService: BaseSiteService,
+    protected cartConfigService: CartConfigService
   ) {
-    this.userService.get().subscribe(user => {
-      if (user && user.customerId) {
+    combineLatest([
+      this.userService.get(),
+      this.baseSiteService.getActive(),
+    ]).subscribe(([user, activeBaseSite]) => {
+      if (user && user.customerId && activeBaseSite) {
         this.customerId = user.customerId;
-        this.cartId$.next(`selectivecart${this.customerId}`);
+        this.cartId$.next(`selectivecart${activeBaseSite}${this.customerId}`);
+      } else if (user && !user.customerId) {
+        this.cartId$.next(undefined);
       }
     });
 
-    this.authService.getOccUserId().subscribe(userId => {
+    this.authService.getOccUserId().subscribe((userId) => {
       this.userId = userId;
-      if (this.userId !== OCC_USER_ID_ANONYMOUS) {
-        if (this.isJustLoggedIn(userId)) {
-          this.load();
-        }
+
+      if (this.isJustLoggedIn(userId)) {
+        this.load();
       }
+
       this.previousUserId = userId;
     });
 
@@ -93,33 +98,35 @@ export class SelectiveCartService {
 
   getLoaded(): Observable<boolean> {
     return this.cartSelector$.pipe(
-      map(cart => (cart.success || cart.error) && !cart.loading)
+      map((cart) => (cart.success || cart.error) && !cart.loading)
     );
   }
 
   private load() {
-    this.multiCartService.loadCart({
-      userId: this.userId,
-      cartId: this.cartId,
-    });
+    if (this.isLoggedIn(this.userId) && this.cartId) {
+      this.multiCartService.loadCart({
+        userId: this.userId,
+        cartId: this.cartId,
+      });
+    }
   }
 
   addEntry(productCode: string, quantity: number): void {
-    let createInitialized = false;
+    let loadAttempted = false;
     this.cartSelector$
       .pipe(
-        filter(() => !createInitialized),
-        switchMap(cartState => {
+        filter(() => !loadAttempted),
+        switchMap((cartState) => {
           if (this.isEmpty(cartState.value) && !cartState.loading) {
-            createInitialized = true;
+            loadAttempted = true;
             this.load();
           }
           return of(cartState);
         }),
-        filter(cartState => !this.isEmpty(cartState.value)),
+        filter((cartState) => !this.isEmpty(cartState.value)),
         take(1)
       )
-      .subscribe(_ => {
+      .subscribe(() => {
         this.multiCartService.addEntry(
           this.userId,
           this.cartId,
@@ -150,6 +157,13 @@ export class SelectiveCartService {
     return this.multiCartService.getEntry(this.cartId, productCode);
   }
 
+  /**
+   * Indicates if selectiveCart feature is enabled based on cart configuration.
+   */
+  isEnabled(): boolean {
+    return this.cartConfigService.isSelectiveCartEnabled();
+  }
+
   private isEmpty(cart: Cart): boolean {
     return (
       !cart || (typeof cart === 'object' && Object.keys(cart).length === 0)
@@ -165,6 +179,6 @@ export class SelectiveCartService {
   }
 
   private isLoggedIn(userId: string): boolean {
-    return typeof userId !== 'undefined';
+    return typeof userId !== 'undefined' && userId !== OCC_USER_ID_ANONYMOUS;
   }
 }

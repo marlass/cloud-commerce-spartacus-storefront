@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   CmsProductCarouselComponent as model,
-  FeatureConfigService,
   Product,
+  ProductScope,
   ProductService,
 } from '@spartacus/core';
 import { Observable } from 'rxjs';
@@ -15,8 +15,7 @@ import { CmsComponentData } from '../../../../cms-structure/page/model/cms-compo
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductCarouselComponent {
-  protected readonly PRODUCT_SCOPE =
-    this.features && this.features.isLevel('1.4') ? 'list' : '';
+  protected readonly PRODUCT_SCOPE = ProductScope.LIST;
 
   private componentData$: Observable<model> = this.componentData.data$.pipe(
     filter(Boolean)
@@ -26,7 +25,7 @@ export class ProductCarouselComponent {
    * returns an Obervable string for the title.
    */
   title$: Observable<string> = this.componentData$.pipe(
-    map(data => data.title)
+    map((data) => data.title)
   );
 
   /**
@@ -35,15 +34,14 @@ export class ProductCarouselComponent {
    * in the viewpoint.
    */
   items$: Observable<Observable<Product>[]> = this.componentData$.pipe(
-    map(data => data.productCodes.trim().split(' ')),
-    map(codes =>
-      codes.map(code => this.productService.get(code, this.PRODUCT_SCOPE))
+    map((data) => data.productCodes.trim().split(' ')),
+    map((codes) =>
+      codes.map((code) => this.productService.get(code, this.PRODUCT_SCOPE))
     )
   );
 
   constructor(
     protected componentData: CmsComponentData<model>,
-    protected productService: ProductService,
-    protected features?: FeatureConfigService
+    protected productService: ProductService
   ) {}
 }

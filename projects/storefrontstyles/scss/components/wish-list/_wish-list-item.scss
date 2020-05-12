@@ -6,10 +6,6 @@
     }
   }
 
-  cx-media.is-missing {
-    min-width: 96px;
-  }
-
   .cx-name {
     @include type('5');
     overflow-wrap: break-word;
@@ -88,6 +84,10 @@
     @include media-breakpoint-down(sm) {
       margin: 0.5em 0;
     }
+  }
+
+  .cx-out-of-stock {
+    text-align: right;
   }
 
   .cx-return-button {

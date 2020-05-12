@@ -13,6 +13,7 @@ import {
   appendHtmlElementToHead,
   getProjectStyleFile,
 } from '@angular/cdk/schematics';
+import { isImported } from '@schematics/angular/utility/ast-utils';
 import {
   addPackageJsonDependency,
   NodeDependency,
@@ -20,51 +21,63 @@ import {
 } from '@schematics/angular/utility/dependencies';
 import { getAppModulePath } from '@schematics/angular/utility/ng-ast-utils';
 import { getProjectTargets } from '@schematics/angular/utility/project-targets';
-import { getIndexHtmlPath } from '../shared/utils/file-utils';
+import {
+  ANGULAR_LOCALIZE,
+  B2C_STOREFRONT_MODULE,
+  SPARTACUS_ASSETS,
+  SPARTACUS_CORE,
+  SPARTACUS_STOREFRONTLIB,
+  SPARTACUS_STYLES,
+} from '../shared/constants';
+import { getIndexHtmlPath, getTsSourceFile } from '../shared/utils/file-utils';
 import {
   addImport,
   addToModuleImportsAndCommitChanges,
 } from '../shared/utils/module-file-utils';
-import { getAngularVersion } from '../shared/utils/package-utils';
+import {
+  getAngularVersion,
+  getSpartacusCurrentFeatureLevel,
+  getSpartacusSchematicsVersion,
+} from '../shared/utils/package-utils';
 import { getProjectFromWorkspace } from '../shared/utils/workspace-utils';
 import { Schema as SpartacusOptions } from './schema';
 
 function addPackageJsonDependencies(): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    const spartacusVersion = '^1.3';
-    const ngrxVersion = '^8.3.0';
+    const spartacusVersion = `^${getSpartacusSchematicsVersion()}`;
+    const ngrxVersion = '~9.1.0';
     const angularVersion = getAngularVersion(tree);
 
     const dependencies: NodeDependency[] = [
       {
         type: NodeDependencyType.Default,
         version: spartacusVersion,
-        name: '@spartacus/core',
+        name: SPARTACUS_CORE,
       },
       {
         type: NodeDependencyType.Default,
         version: spartacusVersion,
-        name: '@spartacus/storefront',
+        name: SPARTACUS_STOREFRONTLIB,
       },
       {
         type: NodeDependencyType.Default,
         version: spartacusVersion,
-        name: '@spartacus/assets',
+        name: SPARTACUS_ASSETS,
       },
       {
         type: NodeDependencyType.Default,
         version: spartacusVersion,
-        name: '@spartacus/styles',
+        name: SPARTACUS_STYLES,
       },
 
       {
         type: NodeDependencyType.Default,
-        version: '^4.1.0',
+        version: '^6.0.0',
         name: '@ng-bootstrap/ng-bootstrap',
       },
       {
         type: NodeDependencyType.Default,
-        version: '^2.13.2',
+        version: '^4.0.0',
         name: '@ng-select/ng-select',
       },
 
@@ -89,16 +102,21 @@ function addPackageJsonDependencies(): Rule {
         version: '^4.2.1',
         name: 'bootstrap',
       },
-      { type: NodeDependencyType.Default, version: '^15.0.6', name: 'i18next' },
+      { type: NodeDependencyType.Default, version: '^19.3.4', name: 'i18next' },
       {
         type: NodeDependencyType.Default,
-        version: '^2.0.1',
+        version: '^3.2.2',
         name: 'i18next-xhr-backend',
       },
       {
         type: NodeDependencyType.Default,
-        version: angularVersion || '~8.2.5',
+        version: angularVersion,
         name: '@angular/service-worker',
+      },
+      {
+        type: NodeDependencyType.Default,
+        version: angularVersion,
+        name: ANGULAR_LOCALIZE,
       },
       {
         type: NodeDependencyType.Default,
@@ -107,10 +125,9 @@ function addPackageJsonDependencies(): Rule {
       },
     ];
 
-    dependencies.forEach(dependency => {
+    dependencies.forEach((dependency) => {
       addPackageJsonDependency(tree, dependency);
-      context.logger.log(
-        'info',
+      context.logger.info(
         `✅️ Added '${dependency.name}' into ${dependency.type}`
       );
     });
@@ -138,7 +155,7 @@ function getStorefrontConfig(options: SpartacusOptions): string {
   return `{
       backend: {
         occ: {${options.useMetaTags ? '' : baseUrlPart}
-          prefix: '/rest/v2/'
+          prefix: '${options.occPrefix}'
         }
       },${contextContent}
       i18n: {
@@ -147,8 +164,7 @@ function getStorefrontConfig(options: SpartacusOptions): string {
         fallbackLang: 'en'
       },
       features: {
-        level: '${options.featureLevel}',
-        anonymousConsents: true
+        level: '${options.featureLevel || getSpartacusCurrentFeatureLevel()}'
       }
     }`;
 }
@@ -167,17 +183,26 @@ function updateAppModule(options: SpartacusOptions): Rule {
     const mainPath = projectTargets.build.options.main;
     const modulePath = getAppModulePath(host, mainPath);
     context.logger.debug(`main module path: ${modulePath}`);
+    const moduleSource = getTsSourceFile(host, modulePath);
+    if (
+      !isImported(moduleSource, B2C_STOREFRONT_MODULE, SPARTACUS_STOREFRONTLIB)
+    ) {
+      // add imports
+      addImport(host, modulePath, 'translations', SPARTACUS_ASSETS);
+      addImport(host, modulePath, 'translationChunksConfig', SPARTACUS_ASSETS);
+      addImport(
+        host,
+        modulePath,
+        B2C_STOREFRONT_MODULE,
+        SPARTACUS_STOREFRONTLIB
+      );
 
-    // add imports
-    addImport(host, modulePath, 'translations', '@spartacus/assets');
-    addImport(host, modulePath, 'translationChunksConfig', '@spartacus/assets');
-    addImport(host, modulePath, 'B2cStorefrontModule', '@spartacus/storefront');
-
-    addToModuleImportsAndCommitChanges(
-      host,
-      modulePath,
-      `B2cStorefrontModule.withConfig(${getStorefrontConfig(options)})`
-    );
+      addToModuleImportsAndCommitChanges(
+        host,
+        modulePath,
+        `${B2C_STOREFRONT_MODULE}.withConfig(${getStorefrontConfig(options)})`
+      );
+    }
 
     return host;
   };
@@ -282,7 +307,7 @@ function updateIndexFile(
       `<meta name="media-backend-base-url" content="MEDIA_BACKEND_BASE_URL_VALUE" />`,
     ];
 
-    metaTags.forEach(metaTag => {
+    metaTags.forEach((metaTag) => {
       appendHtmlElementToHead(host, projectIndexHtmlPath, metaTag);
     });
 
@@ -292,12 +317,7 @@ function updateIndexFile(
 
 export function addSpartacus(options: SpartacusOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    const possibleProjectFiles = ['/angular.json', '/.angular.json'];
-    const project = getProjectFromWorkspace(
-      tree,
-      options,
-      possibleProjectFiles
-    );
+    const project = getProjectFromWorkspace(tree, options);
 
     return chain([
       addPackageJsonDependencies(),

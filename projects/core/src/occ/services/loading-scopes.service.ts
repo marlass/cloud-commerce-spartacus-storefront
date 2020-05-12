@@ -27,27 +27,42 @@ export class LoadingScopesService {
       this.config.backend.loadingScopes[model];
 
     if (scopesConfig) {
-      let i = 0;
+      const expandedScopes = [...scopes];
+      let i = expandedScopes.length;
 
-      const expandedScopes = [...scopes].reverse(); // to ensure proper scopes merging order
-
-      while (i < expandedScopes.length) {
+      while (i > 0) {
+        i--;
         const includedScopes =
           scopesConfig[expandedScopes[i]] &&
           scopesConfig[expandedScopes[i]].include;
         if (includedScopes) {
           for (const includedScope of includedScopes) {
             if (!expandedScopes.includes(includedScope)) {
-              expandedScopes.push(includedScope);
+              expandedScopes.splice(i, 0, includedScope);
+              i++;
             }
           }
         }
-        i++;
       }
 
-      return expandedScopes.reverse();
+      return expandedScopes;
     }
 
     return scopes;
+  }
+
+  /**
+   * Return maxAge for product scope in milliseconds
+   *
+   * @param model
+   * @param scope
+   */
+  getMaxAge(model: string, scope: string): number {
+    const scopesConfig =
+      this.config &&
+      this.config.backend &&
+      this.config.backend.loadingScopes &&
+      this.config.backend.loadingScopes[model];
+    return (scopesConfig[scope] && scopesConfig[scope].maxAge) * 1000 || 0;
   }
 }

@@ -1,16 +1,16 @@
 <div class="row">
   <!-- Item Image -->
   <div class="cx-image-container col-2">
-    <a [routerLink]="{ cxRoute: 'product', params: cartEntry.product } | cxUrl">
-      <cx-media
-        [container]="cartEntry.product.images?.PRIMARY"
-        format="thumbnail"
-      ></cx-media>
+    <a
+      [routerLink]="{ cxRoute: 'product', params: cartEntry.product } | cxUrl"
+      tabindex="-1"
+    >
+      <cx-media [container]="cartEntry.product.images?.PRIMARY"></cx-media>
     </a>
   </div>
   <!-- Item Information -->
   <div class="cx-info col-10">
-    <div class="cx-info-container row ">
+    <div class="cx-info-container row">
       <!-- Item Description -->
       <div class="col-md-5 col-lg-5 col-xl-5">
         <div *ngIf="cartEntry.product.name" class="cx-name">
@@ -26,13 +26,19 @@
           {{ 'cartItems.id' | cxTranslate }} {{ cartEntry.product.code }}
         </div>
         <!-- Variants -->
-        <!-- TODO #5593 <div
-          *ngFor="let variant of cartEntry.product.variantOptionQualifiers"
-          class="cx-property"
-        >
-          <div class="cx-label">{{ variant.name }}</div>
-          <div class="cx-value">{{ variant.value }}</div>
-        </div> -->
+        <ng-container *ngIf="cartEntry.product.baseOptions?.length">
+          <div
+            *ngFor="
+              let variant of cartEntry.product.baseOptions[0]?.selected
+                ?.variantOptionQualifiers
+            "
+            class="cx-property"
+          >
+            <div class="cx-label" *ngIf="variant.name && variant.value">
+              {{ variant.name }}: {{ variant.value }}
+            </div>
+          </div>
+        </ng-container>
       </div>
       <!-- Item Price -->
       <div
@@ -46,29 +52,26 @@
           {{ cartEntry.basePrice?.formattedValue }}
         </div>
       </div>
-      <!-- Item Quantity -->
-      <!-- <div *ngIf="cartEntry.quantity" class="cx-quantity col-3">
-        <div
-          class="cx-label d-block d-md-none d-lg-none d-xl-none"
-          placement="left"
-          title="{{ 'cartItems.quantityTitle' | cxTranslate }}"
-        >
-          {{ 'cartItems.quantity' | cxTranslate }}
-        </div>
-        <div class="cx-value">{{ cartEntry.quantity }}</div>
-      </div> -->
       <!-- Total -->
       <div class="col-sm-8 col-md-4 col-lg-3 col-xl-3 cx-add-to-cart">
         <cx-add-to-cart
-          *ngIf="cartEntry.product.stock.stockLevelStatus !== 'outOfStock'"
+          *ngIf="
+            cartEntry.product.stock.stockLevelStatus !== 'outOfStock';
+            else outOfStock
+          "
           [showQuantity]="false"
           [product]="cartEntry.product"
         ></cx-add-to-cart>
+        <ng-template #outOfStock>
+          <span class="cx-out-of-stock">
+            {{ 'addToCart.outOfStock' | cxTranslate }}
+          </span>
+        </ng-template>
       </div>
     </div>
     <div class="cx-return-button col-12">
       <button
-        class="btn btn-link"
+        class="btn cx-action-link"
         (click)="removeEntry(cartEntry)"
         [disabled]="isLoading"
       >
