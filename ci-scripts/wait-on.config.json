@@ -1,7 +1,7 @@
 {
-  "delay": 100000, // initial delay in ms, default 0
-  "interval": 10000, // poll interval in ms, default 250ms
-  "timeout": 300000, // timeout in ms, default Infinity
-  "window": 1000, // stabilization time in ms, default 750ms
+  "delay": 100000,
+  "interval": 10000,
+  "timeout": 300000,
+  "window": 1000,
   "followRedirect": false
 }
