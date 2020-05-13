@@ -14,6 +14,6 @@ jobs:
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }}
       - name: Wait for status 200
-        run: sleep 60 && npx wait-on $CYPRESS_BASE_URL -c ./ci-scripts/wait-on.config.json && echo "deploy successfully finished" echo $CYPRESS_BASE_URL
+        run: sleep 30 && npx wait-on $CYPRESS_BASE_URL -c ./ci-scripts/wait-on.config.json && echo "deploy successfully finished" && echo $CYPRESS_BASE_URL
         env:
           CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
