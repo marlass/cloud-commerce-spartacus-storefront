@@ -33,7 +33,7 @@ jobs:
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }}
       - name: Cypress smoke
-        run: cd projects/storefrontapp-e2e-cypress && yarn && echo $CYPRESS_BASE_URL && yarn run cy:run:smoke:ci:ccv2
+        run: cd projects/storefrontapp-e2e-cypress && yarn && echo $CYPRESS_BASE_URL && yarn run cy:run
         env:
           CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
