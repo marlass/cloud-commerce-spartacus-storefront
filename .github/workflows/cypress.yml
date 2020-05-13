@@ -1,0 +1,39 @@
+name: Deploy & E2E
+
+on: [push]
+
+jobs:
+  wait-for-deploy:
+    name: Wait for deploy to finish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Wait for status 200
+        run: sleep 30 && npx wait-on $CYPRESS_BASE_URL -c ./ci-scripts/wait-on.config.json && echo "deploy successfully finished" && echo $CYPRESS_BASE_URL
+        env:
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+  test:
+    needs: [wait-for-deploy]
+    name: E2E tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: zeit-url
+        uses: marlass/now-deployment-url@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+      - name: Cypress smoke
+        run: yarn && cd projects/storefrontapp-e2e-cypress && yarn && echo $CYPRESS_BASE_URL && yarn run cy:run
+        env:
+          CYPRESS_BASE_URL: ${{ env.CYPRESS_BASE_URL }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

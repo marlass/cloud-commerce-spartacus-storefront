@@ -1,0 +1,7 @@
+{
+  "delay": 100000,
+  "interval": 10000,
+  "timeout": 300000,
+  "window": 1000,
+  "followRedirect": false
+}

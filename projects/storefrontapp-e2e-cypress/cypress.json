@@ -5,8 +5,9 @@
   "env": {
     "CLIENT_ID": "mobile_android",
     "CLIENT_SECRET": "secret",
-    "API_URL": "https://dev-com-17.accdemo.b2c.ydev.hybris.com:9002",
+    "API_URL": "https://api.c39j2-walkersde1-d4-public.model-t.cc.commerce.ondemand.com",
     "OCC_PREFIX": "/rest/v2",
     "BASE_SITE": "electronics-spa"
-  }
+  },
+  "chromeWebSecurity": false
 }
