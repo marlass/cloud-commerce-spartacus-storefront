@@ -1,6 +1,6 @@
 name: Deploy & E2E
 
-on: [pull_request]
+on: [push]
 
 jobs:
   build-and-deploy:
