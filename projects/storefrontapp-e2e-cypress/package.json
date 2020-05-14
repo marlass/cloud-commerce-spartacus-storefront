@@ -6,7 +6,9 @@
   "license": "MIT",
   "scripts": {
     "cy:open": "cypress open",
+    "cy:open:ccv2": "cypress open --config-file cypress.ci.ccv2.json",
     "cy:run": "cypress run",
+    "cy:run:ccv2": "cypress run --config-file cypress.ci.ccv2.json",
     "cy:run:ci:1905": "cypress run --config-file cypress.ci.1905.json --spec \"cypress/integration/!(vendor)/**/*.e2e-spec.ts\"",
     "cy:run:ci:2005": "cypress run --config-file cypress.ci.2005.json --spec \"cypress/integration/!(vendor)/**/*.e2e-spec.ts\"",
     "cy:run:ci:ccv2": "cypress run --config-file cypress.ci.ccv2.json --spec \"cypress/integration/!(vendor)/**/*.e2e-spec.ts\"",
