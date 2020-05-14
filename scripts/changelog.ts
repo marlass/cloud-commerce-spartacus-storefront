@@ -202,8 +202,7 @@ export default async function run(
       const semversion = (args.to && semver.parse(args.to)) || {
         prerelease: '',
       };
-      console.log('blabla');
-      console.log('body', body);
+
       return ghGot(
         'repos/SAP/cloud-commerce-spartacus-storefront/releases' + id,
         {
