@@ -10,12 +10,11 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v1
       - name: Build
-        run: yarn && yarn build:core:lib && yarn build && node ./ci-scripts/generate-vercel-project.js && cd dist && cd storefrontapp && npx now@19 --token "$token"
+        run: yarn && yarn build:core:lib && yarn build:ci:ccv2 && node ./ci-scripts/generate-vercel-project.js && cd dist && cd storefrontapp && npx now@19 --token "$token"
         env:
           token: ${{ secrets.ZEIT_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          TEST_ENV: ${{ secrets.TEST_ENV }}
   # test:
   #   needs: [deploy]
   #   name: Smoke
