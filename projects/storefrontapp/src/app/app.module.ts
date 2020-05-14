@@ -72,6 +72,9 @@ if (!environment.production) {
           enabled: true,
         },
       },
+      pwa: {
+        enabled: false,
+      },
     }),
     JsonLdBuilderModule,
 
