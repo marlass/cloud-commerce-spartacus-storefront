@@ -3,6 +3,8 @@ const path = require('path');
 
 const dir = path.join(__dirname, '../dist/storefrontapp/.vercel');
 
+console.log(process.env['TEST_ENV']);
+
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir);
 }
