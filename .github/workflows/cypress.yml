@@ -10,7 +10,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v1
       - name: Build
-        run: yarn && yarn build:core:lib && yarn build:ci:ccv2 && node ./ci-scripts/generate-vercel-project.js && cd dist && cd storefrontapp && npx now@19 --token "$token"
+        run: yarn && yarn build:core:lib && yarn build:ci:ccv2 && node ./ci-scripts/generate-vercel-project.js && cd dist && cd storefrontapp && npx now@19 --token "$token" --local-config "../../now.csr.json"
         env:
           token: ${{ secrets.ZEIT_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
