@@ -28,7 +28,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # run 1 copy of the current job in parallel
         containers: [1]
     steps:
       - name: Checkout
