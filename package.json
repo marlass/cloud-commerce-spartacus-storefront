@@ -60,7 +60,6 @@
     "test": "ng test",
     "test:core:lib": "concurrently \"ng test core --code-coverage\" \"ng test storefrontlib --code-coverage\"",
     "test:storefront:lib": "ng test storefrontlib --sourceMap --code-coverage",
-    "start:ssr": "node dist/ssr/server",
     "dev:ssr": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 ng run storefrontapp:serve-ssr",
     "serve:ssr:dev": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 node dist/storefrontapp-server/main.js",
     "serve:ssr": "node dist/storefrontapp-server/main.js",
