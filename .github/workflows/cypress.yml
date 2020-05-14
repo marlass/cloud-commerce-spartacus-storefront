@@ -10,11 +10,16 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v1
       - name: Build
-        run: yarn && yarn build:core:lib && yarn build:ci:ccv2 && node ./ci-scripts/generate-vercel-project.js && cd dist && cd storefrontapp && npx now@19 --token "$token" --local-config "../../now.csr.json"
+        run: yarn && yarn build:core:lib && yarn build:ci:ccv2 && node ./ci-scripts/generate-vercel-project.js
         env:
           token: ${{ secrets.ZEIT_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: zeit-url
+        uses: marlass/now-deployment@master
+        with:
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+          now-args: './dist/storefrontapp --local-config "./now.csr.json"'
   # test:
   #   needs: [deploy]
   #   name: Smoke
