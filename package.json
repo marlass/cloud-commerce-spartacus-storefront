@@ -7,7 +7,6 @@
   },
   "scripts": {
     "build": "ng build storefrontapp --prod",
-    "build:ci:ccv2": "ng build storefrontapp --prod -c=ccv2",
     "build:assets": "ng build assets --prod && yarn generate:translations:ts-2-json",
     "build:core:lib": "ng build core --prod && ng build storefrontlib --prod && yarn build:assets && yarn build:incubator",
     "build:incubator": "ng build incubator --prod",
