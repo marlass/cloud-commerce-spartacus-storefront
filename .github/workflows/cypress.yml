@@ -19,7 +19,7 @@ jobs:
         uses: marlass/now-deployment@master
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }}
-          now-args: './dist/storefrontapp --local-config "./now.csr.json"'
+          now-args: 'dist/storefrontapp --local-config ./now.csr.json'
   # test:
   #   needs: [deploy]
   #   name: Smoke
