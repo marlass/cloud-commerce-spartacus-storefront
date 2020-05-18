@@ -12,13 +12,12 @@ jobs:
       - name: Build
         run: yarn && yarn build:core:lib && yarn build -c=ccv2 && node ./ci-scripts/generate-vercel-project.js
         env:
-          token: ${{ secrets.ZEIT_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      - name: zeit-url
-        uses: marlass/now-deployment@master
+      - name: vercel-deployment
+        uses: ./.github/vercel-deployment
         with:
-          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+          vercel-token: ${{ secrets.ZEIT_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           now-args: 'dist/storefrontapp --local-config ./now.csr.json'
   test:
